@@ -58,6 +58,16 @@ module FakeBraintree
       Address.new(address_hash, options).create
     end
 
+    # Braintree::Customer#transactions
+    post "/merchants/:merchant_id/customers/:customer_id/transaction_ids" do
+      customer = FakeBraintree.registry.customers[params[:customer_id]]
+      if customer
+        gzipped_response(200, { page_size: 50, ids: [] }.to_xml(root: 'search_results'))
+      else
+        gzipped_response(404, {})
+      end
+    end
+
     # Braintree::Subscription.create
     post '/merchants/:merchant_id/subscriptions' do
       subscription_hash = hash_from_request_body_with_key('subscription')
